@@ -112,27 +112,6 @@ jobs:
           SHLIB_OPENMP_FFLAGS=-fopenmp
           SHLIB_OPENMP_FCFLAGS=-fopenmp
           EOF
-      
-      - name: Test Clang OpenMP support on Linux
-        if: runner.os == 'Linux' && matrix.config.compiler == 'clang'
-        shell: bash
-        run: |
-          cat > test-openmp.c <<'EOF'
-          #include <omp.h>
-          #include <stdio.h>
-
-          int main(void) {
-            int n = 0;
-            #pragma omp parallel reduction(+:n)
-            n += 1;
-            printf("OpenMP threads: %d\n", n);
-            return 0;
-          }
-          EOF
-
-          clang -fopenmp test-openmp.c -o test-openmp
-          ./test-openmp
-
 
       # --------------------------------------------------------------------
       # macOS compiler setup
