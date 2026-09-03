@@ -87,8 +87,16 @@ jobs:
         if: runner.os == 'Linux' && matrix.config.compiler == 'clang'
         shell: bash
         run: |
+          set -euo pipefail
+          source /etc/os-release
           sudo apt-get update
-          sudo apt-get install -y clang-23 libomp-23-dev gfortran
+          sudo apt-get install -y gfortran wget gpg
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | \
+            sudo gpg --dearmor -o /usr/share/keyrings/llvm-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/llvm-archive-keyring.gpg] http://apt.llvm.org/${UBUNTU_CODENAME}/ llvm-toolchain-${UBUNTU_CODENAME}-23 main" | \
+            sudo tee /etc/apt/sources.list.d/llvm.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y clang-23 libomp-23-dev
 
       - name: Configure R to use Clang with OpenMP on Linux
         if: runner.os == 'Linux' && matrix.config.compiler == 'clang'
