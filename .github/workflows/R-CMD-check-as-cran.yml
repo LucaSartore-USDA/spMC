@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang libomp-dev gfortran
+          sudo apt-get install -y clang-23 libomp-23-dev gfortran
 
       - name: Configure R to use Clang with OpenMP on Linux
         if: runner.os == 'Linux' && matrix.config.compiler == 'clang'
@@ -97,12 +97,12 @@ jobs:
           mkdir -p ~/.R
 
           cat > ~/.R/Makevars <<'EOF'
-          CC=clang
-          CXX=clang++
-          CXX11=clang++
-          CXX14=clang++
-          CXX17=clang++
-          CXX20=clang++
+          CC=clang-23
+          CXX=clang++-23
+          CXX11=clang++-23
+          CXX14=clang++-23
+          CXX17=clang++-23
+          CXX20=clang++-23
 
           FC=gfortran
           F77=gfortran
@@ -160,7 +160,7 @@ jobs:
         shell: bash
         run: |
           brew update
-          brew install llvm
+          brew install llvm libomp 
 
           LLVM_PREFIX="$(brew --prefix llvm)"
 
