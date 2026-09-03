@@ -259,7 +259,21 @@ jobs:
           SHLIB_LD=clang23
           SHLIB_CXXLD=clang++23
           "@ | Out-File -FilePath "$HOME/.R/Makevars.win" -Encoding ASCII
-
+          @"
+          CC=clang23
+          CXX=clang++23
+          CXX11=clang++23
+          CXX14=clang++23
+          CXX17=clang++23
+          CXX20=clang++23
+          FC=gfortran
+          F77=gfortran
+          AR=llvm-ar
+          NM=llvm-nm
+          RANLIB=llvm-ranlib
+          SHLIB_LD=clang23
+          SHLIB_CXXLD=clang++23
+          "@ | Out-File -FilePath "$HOME/.R/Makevars" -Encoding ASCII
       # --------------------------------------------------------------------
       # Diagnostic step
       # --------------------------------------------------------------------
