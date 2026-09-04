@@ -208,7 +208,7 @@ jobs:
           "@ | Out-File -FilePath "$HOME/.R/Makevars.win" -Encoding ASCII
 
       - name: Install LLVM 23 on Windows
-        if: runner.os == 'Windows' && matrix.config.compiler == 'clang23'
+        if: runner.os == 'Windows' && matrix.config.compiler == 'clang'
         shell: pwsh
         run: |
           $llvmVersion = '23.1.0'
@@ -239,7 +239,7 @@ jobs:
           'C:\Program Files\LLVM\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
       - name: Configure R to use Clang 23 on Windows
-        if: runner.os == 'Windows' && matrix.config.compiler == 'clang23'
+        if: runner.os == 'Windows' && matrix.config.compiler == 'clang'
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force "$HOME/.R" | Out-Null
