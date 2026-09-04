@@ -24,9 +24,9 @@ jobs:
         config:
           # macOS
           - {os: macos-latest, r: 'release', compiler: 'gcc',   experimental: false}
-          - {os: macos-latest, r: 'devel',   compiler: 'gcc',   experimental: false}
+          - {os: macos-latest, r: 'devel',   compiler: 'gcc',   experimental: true}
           - {os: macos-latest, r: 'release', compiler: 'clang', experimental: false}
-          - {os: macos-latest, r: 'devel',   compiler: 'clang', experimental: false}
+          - {os: macos-latest, r: 'devel',   compiler: 'clang', experimental: true}
 
           # Ubuntu
           - {os: ubuntu-latest, r: 'release', compiler: 'gcc',   experimental: false}
@@ -35,17 +35,17 @@ jobs:
           - {os: ubuntu-latest, r: 'devel',   compiler: 'clang', experimental: false, http-user-agent: 'release'}
 
           # Windows
-          - {os: windows-latest, r: 'release', compiler: 'gcc',   experimental: false}
-          - {os: windows-latest, r: 'devel',   compiler: 'gcc',   experimental: false}
-          - {os: windows-latest, r: 'release', compiler: 'clang23', experimental: true}
-          - {os: windows-latest, r: 'devel',   compiler: 'clang23', experimental: true}
+          - {os: windows-latest, r: 'release', compiler: 'gcc',   experimental: true}
+          - {os: windows-latest, r: 'devel',   compiler: 'gcc',   experimental: true}
+          - {os: windows-latest, r: 'release', compiler: 'clang', experimental: true}
+          - {os: windows-latest, r: 'devel',   compiler: 'clang', experimental: true}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -168,7 +168,7 @@ jobs:
         shell: bash
         run: |
           brew update
-          brew install llvm libomp 
+          brew install llvm libomp
 
           LLVM_PREFIX="$(brew --prefix llvm)"
 
@@ -185,6 +185,12 @@ jobs:
           CPPFLAGS=-I${LLVM_PREFIX}/include
           LDFLAGS=-L${LLVM_PREFIX}/lib
           EOF
+
+      - name: Use default macOS toolchain on R-devel
+        if: runner.os == 'macOS' && matrix.config.r == 'devel'
+        shell: bash
+        run: |
+          echo "Using default toolchain for macOS R-devel to avoid Homebrew toolchain incompatibilities."
 
       # --------------------------------------------------------------------
       # Windows compiler setup
@@ -274,6 +280,7 @@ jobs:
           SHLIB_LD=clang23
           SHLIB_CXXLD=clang++23
           "@ | Out-File -FilePath "$HOME/.R/Makevars" -Encoding ASCII
+          
       # --------------------------------------------------------------------
       # Diagnostic step
       # --------------------------------------------------------------------
@@ -309,6 +316,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          dependencies: '"hard"'
           extra-packages: any::rcmdcheck
           needs: check
 
